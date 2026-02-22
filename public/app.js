@@ -378,6 +378,14 @@ ideaForm.addEventListener('submit', async (e) => {
     alert('Please fill in all required fields');
     return;
   }
+  if (idea.problem.split(/\s+/).length < 5) {
+    alert('Please write at least 5 words for the automation request');
+    return;
+  }
+  if (idea.billion.split(/\s+/).length < 5) {
+    alert('Please write at least 5 words for the billion-dollar idea');
+    return;
+  }
 
   submitIdeaBtn.disabled = true;
   submitIdeaBtn.textContent = 'Submitting...';
