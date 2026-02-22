@@ -75,6 +75,77 @@ const UPLOAD_COUNT_KEY = 'uploadgetlink_upload_count';
 const BONUS_UPLOADS_KEY = 'uploadgetlink_bonus_uploads';
 
 // ============================================
+// Automations Configuration
+// ============================================
+const AUTOMATIONS = [
+  {
+    id: 'job-search-ultimate',
+    icon: '🔍',
+    title: 'Job Search Ultimate Workflow',
+    shortDesc: 'Automated daily job search: resume parsing, LinkedIn matching, AI scoring, cover letter generation, and email summary.',
+    tags: ['LinkedIn', 'Google Gemini', 'Gmail', 'Google Sheets'],
+    difficulty: 'Intermediate',
+    estimatedSetup: '30 min',
+    jsonFile: '/automations/job-search-workflow.json',
+    linkedinPost: `I applied to over 2000 jobs last year, and all I got were rejections, until I changed this one thing.
+
+You see, clearing interviews is not just about mass applying to every role you find, you must have heard people say it a 100 times that you need to cater your resume to the exact role you are applying for, not just make it "ATS friendly".
+
+ATS is just a tool which a lot of companies have already denied that they use it to select candidates. Having worked at multiple companies that use ATS systems, it just means to track candidates, extract their information and nothing more.
+
+But catering your resume to each and every role takes up a lot of time, time that you potentially do not have while juggling a lot of different things in university or at work.
+
+I created this n8n workflow a few days ago that will help you automate this entire process end to end, and make your resume the best that the recruiter has ever seen.
+
+1. It runs every morning at 5 AM, so you do not need to worry anymore.
+2. Extracts information from your resume
+3. Finds role basis on the resume and filters you enter that were posted in the last 24 hours
+4. Adds everything from the link, a cover letter and also exact improvements that you can make on your resume
+5. Puts everything onto a Google sheet and sends you an e-mail once it is done.
+
+If I had something like this when I was applying I would have saved soo much time and energy by not manually going through each and every job description and catering my resume to that role.
+
+#n8n #automation #jobsearch #AI #productivity`,
+    workflowNodes: [
+      { name: 'Schedule Trigger', type: 'trigger' },
+      { name: 'Download File', type: 'normal' },
+      { name: 'Extract from PDF', type: 'normal' },
+      { name: 'Get Sheet Rows', type: 'normal' },
+      { name: 'LinkedIn Search', type: 'normal' },
+      { name: 'Fetch Jobs', type: 'normal' },
+      { name: 'Parse HTML', type: 'normal' },
+      { name: 'Split Out', type: 'normal' },
+      { name: 'Wait', type: 'normal' },
+      { name: 'HTTP Request', type: 'normal' },
+      { name: 'Edit Fields', type: 'normal' },
+      { name: 'AI Agent (Gemini)', type: 'ai' },
+      { name: 'Edit Fields', type: 'normal' },
+      { name: 'AI Agent (Gemini)', type: 'ai' },
+      { name: 'Append to Sheet', type: 'output' },
+      { name: 'Loop Over Items', type: 'normal' },
+      { name: 'Send Email (Gmail)', type: 'output' }
+    ],
+    credentials: [
+      { icon: '🤖', name: 'Google Gemini API Key', desc: 'For AI job scoring and cover letter generation (free tier: 60 req/min)' },
+      { icon: '📊', name: 'Google Sheets OAuth', desc: 'To read/write your job tracking spreadsheet' },
+      { icon: '📧', name: 'Gmail OAuth', desc: 'To send daily job match email summaries' }
+    ],
+    setupSteps: [
+      'Install n8n locally (npx n8n) or use n8n Cloud (free tier available)',
+      'Download the workflow JSON from below and import it in n8n (Settings > Import from File)',
+      'Set up a Google Cloud project and enable the Gemini API — get your API key from Google AI Studio (ai.google.dev)',
+      'Create a Google Sheet with columns: Job Title, Company, URL, Match Score, Cover Letter, Resume Tips, Date',
+      'Configure Google Sheets and Gmail OAuth credentials in n8n (follow n8n docs for Google OAuth setup)',
+      'Upload your resume PDF to a publicly accessible URL (you can use the Upload tab on this site!)',
+      'Update the "Download File" node with your resume PDF URL',
+      'Update the "LinkedIn Search" node with your job search keywords, location, and filters',
+      'Set the Schedule Trigger to your preferred time (default: 5 AM daily)',
+      'Activate the workflow and let it run! Check your Google Sheet and email each morning.'
+    ]
+  }
+];
+
+// ============================================
 // Utility Functions
 // ============================================
 function formatFileSize(bytes) {
@@ -167,6 +238,11 @@ function switchTab(tabName) {
   // Load dashboard data if switching to dashboard
   if (tabName === 'dashboard' && accessLevel === 'admin') {
     loadIdeas();
+  }
+
+  // Render automations grid if switching to automations tab
+  if (tabName === 'automations') {
+    renderAutomationsGrid();
   }
 }
 
@@ -660,4 +736,136 @@ if (errorDismiss) {
     hideElement(uploadError);
     resetUploadUI();
   });
+}
+
+// ============================================
+// n8n Automations Tab
+// ============================================
+const automationsContent = document.getElementById('automations-content');
+
+function renderAutomationsGrid() {
+  if (!automationsContent) return;
+
+  const heroHTML = `
+    <div class="automation-hero">
+      <h2>🤖 n8n Automation Workflows</h2>
+      <p>Ready-to-use automation workflows. Download the JSON, import into n8n, add your API keys, and go!</p>
+    </div>
+  `;
+
+  const cardsHTML = AUTOMATIONS.map(a => `
+    <div class="automation-card" data-automation-id="${a.id}" onclick="showAutomationDetail('${a.id}')">
+      <div class="automation-card-icon">${a.icon}</div>
+      <div class="automation-card-title">${a.title}</div>
+      <div class="automation-card-desc">${a.shortDesc}</div>
+      <div class="automation-card-tags">
+        ${a.tags.map(t => `<span class="automation-tag">${t}</span>`).join('')}
+      </div>
+      <div class="automation-card-meta">
+        <span>⏱️ Setup: ${a.estimatedSetup}</span>
+        <span>📊 ${a.difficulty}</span>
+      </div>
+    </div>
+  `).join('');
+
+  automationsContent.innerHTML = `
+    ${heroHTML}
+    <div class="automations-grid">${cardsHTML}</div>
+  `;
+}
+
+function showAutomationDetail(automationId) {
+  const automation = AUTOMATIONS.find(a => a.id === automationId);
+  if (!automation || !automationsContent) return;
+
+  const workflowNodesHTML = automation.workflowNodes.map((node, i) => {
+    const arrow = i < automation.workflowNodes.length - 1
+      ? '<span class="workflow-arrow">→</span>'
+      : '';
+    return `<span class="workflow-node ${node.type}">${node.name}</span>${arrow}`;
+  }).join('');
+
+  const credentialsHTML = automation.credentials.map(c => `
+    <div class="credential-item">
+      <span class="credential-icon">${c.icon}</span>
+      <div>
+        <div class="credential-name">${c.name}</div>
+        <div class="credential-desc">${c.desc}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const setupStepsHTML = automation.setupSteps.map(s => `<li><span>${s}</span></li>`).join('');
+
+  automationsContent.innerHTML = `
+    <div class="automation-detail">
+      <button class="automation-back-btn" onclick="renderAutomationsGrid()">
+        ← Back to all automations
+      </button>
+
+      <div class="automation-hero">
+        <div style="font-size:2.5rem; margin-bottom:0.5rem;">${automation.icon}</div>
+        <h2>${automation.title}</h2>
+        <p>${automation.shortDesc}</p>
+      </div>
+
+      <div class="info-card highlight">
+        <h3>📋 Workflow Overview</h3>
+        <div class="workflow-diagram">
+          <div class="workflow-nodes">
+            ${workflowNodesHTML}
+          </div>
+        </div>
+      </div>
+
+      <div class="automation-actions">
+        <button class="btn btn-primary btn-large" onclick="downloadAutomationJSON('${automation.id}')">
+          ⬇️ Download Workflow JSON
+        </button>
+        <button class="btn btn-outline btn-large" onclick="copyAutomationJSON('${automation.id}')">
+          📋 Copy JSON to Clipboard
+        </button>
+      </div>
+      <p id="automation-copy-feedback" class="feedback hidden" style="text-align:center;">
+        Copied to clipboard!
+      </p>
+
+      <div class="info-card">
+        <h3>🔑 Required Credentials</h3>
+        <p style="color:var(--text-secondary); margin-bottom:1rem;">You use your own API keys — no cost to us, free tiers available for all services.</p>
+        ${credentialsHTML}
+      </div>
+
+      <div class="info-card">
+        <h3>🛠️ Setup Instructions</h3>
+        <ol class="setup-steps">
+          ${setupStepsHTML}
+        </ol>
+      </div>
+
+      <div class="linkedin-post">
+        <div class="linkedin-post-header">
+          <span style="font-size:1.5rem;">💼</span>
+          <div>
+            <div style="font-weight:600; color:var(--text-primary);">LinkedIn Post</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">Share or reference this post</div>
+          </div>
+        </div>
+        <div class="linkedin-post-body">${escapeHtml(automation.linkedinPost)}</div>
+      </div>
+
+      <div class="info-card note">
+        <h3>⚠️ Important Notes</h3>
+        <ul style="padding-left:1.5rem; color:var(--text-secondary);">
+          <li>LinkedIn may rate-limit automated requests. The workflow includes Wait nodes to respect rate limits.</li>
+          <li>Google Gemini free tier allows 60 requests/minute — more than enough for daily job search.</li>
+          <li>Your resume PDF must be at a publicly accessible URL. Use the Upload tab on this site!</li>
+          <li>This workflow is designed for n8n self-hosted or n8n Cloud.</li>
+        </ul>
+      </div>
+    </div>
+  `;
+
+  // Scroll to top of detail view
+  automationsContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
