@@ -1,7 +1,7 @@
 {
-  "name": "uploadgetlink",
+  "name": "n8n-automations",
   "version": "1.0.0",
-  "description": "Simple file upload and sharing service - upload files and get shareable links",
+  "description": "Daily n8n automation workflows, idea submissions, file uploads, and AI job resources",
   "scripts": {
     "dev": "netlify dev"
   },
@@ -16,11 +16,11 @@
     "netlify-cli": "^23.13.0"
   },
   "keywords": [
-    "file-upload",
-    "file-sharing",
-    "azure-blob-storage",
+    "n8n",
+    "automation",
+    "workflows",
     "netlify"
   ],
-  "author": "",
+  "author": "Danda Akhil Reddy",
   "license": "MIT"
 }

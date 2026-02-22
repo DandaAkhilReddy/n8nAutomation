@@ -1,23 +1,23 @@
 <div align="center">
 
-# 📤 UploadGetLink
+# 🤖 Danda Akhil Reddy N8n Automations
 
-### Upload files. Get links. Share instantly.
+### Daily n8n automation workflows — built for you, 100% free.
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/c22c4328-0077-4cf8-9916-94b28f86b799/deploy-status)](https://app.netlify.com/sites/uploadgetlink/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/c22c4328-0077-4cf8-9916-94b28f86b799/deploy-status)](https://app.netlify.com/sites/n8nautomationss/deploys)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Azure](https://img.shields.io/badge/Azure-Blob%20Storage-0078D4?logo=microsoftazure)](https://azure.microsoft.com/)
 [![Netlify](https://img.shields.io/badge/Hosted%20on-Netlify-00C7B7?logo=netlify)](https://netlify.com/)
 
-[**Live Demo**](https://uploadgetlink.netlify.app) · [Report Bug](https://github.com/DandaAkhilReddy/uploadgetlink/issues) · [Request Feature](https://github.com/DandaAkhilReddy/uploadgetlink/issues)
+[**Live Site**](https://n8nautomationss.netlify.app) · [Report Bug](https://github.com/DandaAkhilReddy/n8nAutomation/issues) · [Request Feature](https://github.com/DandaAkhilReddy/n8nAutomation/issues)
 
 </div>
 
 ---
 
-## 🌟 What is UploadGetLink?
+## 🌟 What is this?
 
-UploadGetLink is a simple, fast, and secure file sharing service. Upload any file and get a permanent shareable link instantly. No sign-up required, just enter the password and start sharing!
+A platform where you submit your daily automation ideas and I build them for free using n8n. New automations are added daily — browse, download, and import them into your own n8n instance.
 
 ---
 
@@ -25,15 +25,12 @@ UploadGetLink is a simple, fast, and secure file sharing service. Upload any fil
 
 | Feature | Description |
 |---------|-------------|
-| 🔐 **Password Protected** | Two-tier access: Admin (unlimited) & Public (10 files) |
-| 📁 **Drag & Drop** | Modern drag-and-drop interface for easy uploads |
-| 📊 **Progress Tracking** | Real-time upload progress indicator |
-| 📋 **One-Click Copy** | Copy shareable links instantly to clipboard |
-| 🔗 **Permanent Links** | Files stored permanently - links never expire |
+| 💡 **Idea Submissions** | Tell me what to automate — I'll build it within a week |
+| 🤖 **n8n Automations** | Ready-to-use workflows you can download and import |
+| 📤 **File Uploads** | Upload files and get shareable links (powered by Azure Blob) |
+| 💰 **AI Jobs** | Curated guide to earning $10-$200/hr training AI |
 | 📱 **Responsive Design** | Works beautifully on desktop and mobile |
-| 🌙 **Dark Theme** | Easy on the eyes with a modern dark UI |
-| ⚡ **Serverless** | Powered by Netlify Functions - fast and scalable |
-| 🤖 **n8n Automations** | Ready-to-use automation workflows you can download |
+| ⚡ **Serverless** | Powered by Netlify Functions — fast and scalable |
 
 ---
 
@@ -49,30 +46,16 @@ Browse the **n8n Automations** tab to find ready-to-use workflows you can import
 
 ### How to Use
 
-1. Log in to UploadGetLink with the public password
-2. Go to the **n8n Automations** tab
-3. Click on a workflow to see details and setup instructions
-4. Download or copy the workflow JSON
-5. Import into your n8n instance (Settings > Import from File)
-6. Configure your own API credentials
-7. Activate and enjoy!
+1. Log in with your email
+2. Submit an automation idea to unlock all tabs
+3. Go to the **n8n Automations** tab
+4. Click on a workflow to see details and setup instructions
+5. Download or copy the workflow JSON
+6. Import into your n8n instance (Settings > Import from File)
+7. Configure your own API credentials
+8. Activate and enjoy!
 
 > **Note:** You bring your own API keys. These automations run on your infrastructure at zero cost.
-
----
-
-## 🚀 How It Works
-
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   1. Enter  │ ──▶ │  2. Upload  │ ──▶ │  3. Share   │
-│   Password  │     │    File     │     │    Link     │
-└─────────────┘     └─────────────┘     └─────────────┘
-```
-
-1. **Enter Password** - Use admin or public password to access
-2. **Upload File** - Drag & drop or browse to select your file
-3. **Share Link** - Copy the permanent link and share anywhere!
 
 ---
 
@@ -93,16 +76,16 @@ Browse the **n8n Automations** tab to find ready-to-use workflows you can import
 ## 📁 Project Structure
 
 ```
-uploadgetlink/
+n8nAutomation/
 ├── public/
 │   ├── automations/
 │   │   └── job-search-workflow.json  # n8n workflow JSON
-│   ├── index.html          # Main upload interface
-│   ├── styles.css          # Light theme styling
+│   ├── index.html          # Main interface
+│   ├── styles.css          # Styling
 │   └── app.js              # Frontend logic
 ├── netlify/
 │   └── functions/
-│       ├── auth.js         # Password authentication
+│       ├── auth.js         # Email authentication
 │       ├── get-ideas.js    # Fetch submitted ideas (admin)
 │       ├── submit-idea.js  # Idea submission handler
 │       ├── track-download.js  # Automation download analytics
@@ -113,32 +96,6 @@ uploadgetlink/
 ├── package.json            # Dependencies
 └── README.md
 ```
-
----
-
-## 🔑 Access Levels
-
-| Level | Password | Upload Limit | Use Case |
-|-------|----------|--------------|----------|
-| **Admin** | Your admin password | ♾️ Unlimited | Personal use |
-| **Public** | Your public password | 10 files | Share with others |
-
----
-
-## 📄 Supported File Types
-
-| Category | Extensions |
-|----------|------------|
-| 📄 Documents | `.pdf`, `.doc`, `.docx`, `.txt`, `.rtf`, `.csv` |
-| 📊 Spreadsheets | `.xls`, `.xlsx` |
-| 📽️ Presentations | `.ppt`, `.pptx` |
-| 🖼️ Images | `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, `.svg` |
-| 🎵 Audio | `.mp3` |
-| 🎬 Video | `.mp4`, `.mov`, `.avi`, `.mkv` |
-| 📦 Archives | `.zip`, `.rar`, `.7z` |
-| 💻 Data | `.json`, `.xml` |
-
-> **Note:** Maximum file size is ~4.5MB due to Netlify Functions payload limits.
 
 ---
 
@@ -154,8 +111,8 @@ uploadgetlink/
 
 ```bash
 # Clone the repository
-git clone https://github.com/DandaAkhilReddy/uploadgetlink.git
-cd uploadgetlink
+git clone https://github.com/DandaAkhilReddy/n8nAutomation.git
+cd n8nAutomation
 
 # Install dependencies
 npm install
@@ -164,77 +121,12 @@ npm install
 cat > .env << EOF
 AZURE_STORAGE_CONNECTION_STRING=your_connection_string
 AZURE_CONTAINER_NAME=uploads
+ADMIN_EMAIL=your_admin_email
 ADMIN_PASSWORD=your_admin_password
-PUBLIC_PASSWORD=your_public_password
 EOF
 
 # Run locally with Netlify CLI
 npm run dev
-```
-
----
-
-## 🚀 Deploy Your Own
-
-### 1. Azure Setup
-
-1. Create an Azure Storage Account
-2. Enable "Allow Blob anonymous access" in Configuration
-3. Create a container named `uploads` with **Blob** public access level
-4. Copy the connection string
-
-### 2. Netlify Deployment
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/DandaAkhilReddy/uploadgetlink)
-
-Or manually:
-
-1. Fork this repository
-2. Connect to Netlify
-3. Add environment variables (see below)
-4. Deploy!
-
-### 3. Environment Variables
-
-Configure these in Netlify Dashboard → Site Settings → Environment Variables:
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `AZURE_STORAGE_CONNECTION_STRING` | Azure Storage connection string | ✅ |
-| `AZURE_CONTAINER_NAME` | Container name (default: `uploads`) | ✅ |
-| `ADMIN_PASSWORD` | Password for unlimited uploads | ✅ |
-| `PUBLIC_PASSWORD` | Password for public access (10 files) | ✅ |
-
----
-
-## 🏗️ Architecture
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                        User Browser                          │
-│              (Vanilla HTML/CSS/JavaScript)                   │
-└──────────────────────────┬───────────────────────────────────┘
-                           │
-                           ▼
-┌──────────────────────────────────────────────────────────────┐
-│                    Netlify CDN/Hosting                       │
-│                  (Static Files + Functions)                  │
-└──────────────────────────┬───────────────────────────────────┘
-                           │
-              ┌────────────┴────────────┐
-              ▼                         ▼
-┌─────────────────────┐    ┌─────────────────────┐
-│   /api/auth         │    │   /api/upload       │
-│   (Verify Password) │    │   (Handle Upload)   │
-└─────────────────────┘    └──────────┬──────────┘
-                                      │
-                                      ▼
-                    ┌─────────────────────────────────┐
-                    │      Azure Blob Storage         │
-                    │   (Permanent File Storage)      │
-                    │                                 │
-                    │  https://storage.blob.core...   │
-                    └─────────────────────────────────┘
 ```
 
 ---
@@ -257,17 +149,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🙏 Acknowledgments
-
-- [Netlify](https://netlify.com) for serverless hosting
-- [Azure](https://azure.microsoft.com) for blob storage
-- [Claude Code](https://claude.com/claude-code) for AI-assisted development
-
----
-
 <div align="center">
 
-**Made with ❤️ by [Akhil Reddy](https://github.com/DandaAkhilReddy)**
+**Made with ❤️ by [Danda Akhil Reddy](https://github.com/DandaAkhilReddy)**
 
 ⭐ Star this repo if you found it helpful!
 

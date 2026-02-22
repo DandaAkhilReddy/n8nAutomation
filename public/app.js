@@ -69,9 +69,9 @@ const ADMIN_MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB (limited by Netlify)
 const PUBLIC_MAX_UPLOADS = 10;
 const IDEA_BONUS_UPLOADS = 5;
 const API_BASE = '/api';
-const UPLOAD_COUNT_KEY = 'uploadgetlink_upload_count';
-const BONUS_UPLOADS_KEY = 'uploadgetlink_bonus_uploads';
-const IDEA_SUBMITTED_KEY = 'uploadgetlink_idea_submitted';
+const UPLOAD_COUNT_KEY = 'n8nautomations_upload_count';
+const BONUS_UPLOADS_KEY = 'n8nautomations_bonus_uploads';
+const IDEA_SUBMITTED_KEY = 'n8nautomations_idea_submitted';
 const GATED_TABS = ['upload', 'ai-jobs', 'automations'];
 
 // ============================================
