@@ -1067,6 +1067,273 @@ header h1 {
   border-left: 3px solid var(--primary);
 }
 
+/* ==========================================
+   n8n Automations Tab
+   ========================================== */
+
+/* Automations Grid */
+.automations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.automation-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.automation-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.automation-card-icon {
+  font-size: 2.5rem;
+}
+
+.automation-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.automation-card-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.automation-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.automation-tag {
+  background: var(--primary-bg);
+  color: var(--primary-dark);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--primary-light);
+}
+
+.automation-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-light);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Automation Detail View */
+.automation-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.automation-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--primary-dark);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+  transition: color var(--transition);
+}
+
+.automation-back-btn:hover {
+  color: var(--primary);
+}
+
+.automation-hero {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--primary-bg), rgba(34, 197, 94, 0.05));
+  border-radius: var(--border-radius-lg);
+  border: 2px solid var(--primary-light);
+}
+
+.automation-hero h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+.automation-hero p {
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Workflow Diagram */
+.workflow-diagram {
+  padding: 1.5rem;
+  text-align: center;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.workflow-nodes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.workflow-node {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.workflow-node.trigger {
+  border-color: var(--primary);
+  background: var(--primary-bg);
+}
+
+.workflow-node.ai {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.workflow-node.output {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.workflow-arrow {
+  color: var(--text-muted);
+  font-size: 1.25rem;
+}
+
+/* Automation Actions */
+.automation-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.automation-actions .btn {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Setup Steps */
+.setup-steps {
+  counter-reset: step-counter;
+  list-style: none;
+  padding: 0;
+}
+
+.setup-steps li {
+  counter-increment: step-counter;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.setup-steps li::before {
+  content: counter(step-counter);
+  background: var(--primary);
+  color: white;
+  font-weight: 700;
+  font-size: 0.875rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Credential Items */
+.credential-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.credential-icon {
+  font-size: 1.25rem;
+}
+
+.credential-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.credential-desc {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+/* LinkedIn Post */
+.linkedin-post {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.linkedin-post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.linkedin-post-body {
+  color: var(--text-primary);
+  line-height: 1.7;
+  white-space: pre-line;
+  font-size: 0.95rem;
+}
+
 /* Footer */
 footer {
   text-align: center;
@@ -1178,5 +1445,26 @@ footer a:hover {
 
   .hint-content {
     align-items: center;
+  }
+
+  .automations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .automation-actions {
+    flex-direction: column;
+  }
+
+  .automation-actions .btn {
+    min-width: unset;
+  }
+
+  .workflow-nodes {
+    gap: 0.35rem;
+  }
+
+  .workflow-node {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.5rem;
   }
 }
