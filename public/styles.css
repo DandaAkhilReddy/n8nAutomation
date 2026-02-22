@@ -1068,6 +1068,46 @@ header h1 {
 }
 
 /* ==========================================
+   Locked Tabs (idea gating)
+   ========================================== */
+
+.tab-btn.tab-locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.tab-btn.tab-locked::after {
+  content: '🔒';
+  margin-left: 0.35rem;
+  font-size: 0.75rem;
+}
+
+/* Toast notification */
+.locked-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.locked-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================
    n8n Automations Tab
    ========================================== */
 
@@ -1313,6 +1353,7 @@ header h1 {
 .linkedin-post {
   background: var(--bg-card);
   border: 1px solid var(--border);
+  border-left: 4px solid #0A66C2;
   border-radius: var(--border-radius);
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
@@ -1321,10 +1362,23 @@ header h1 {
 .linkedin-post-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--border-light);
+}
+
+.linkedin-post-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.linkedin-post-author {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
 }
 
 .linkedin-post-body {
@@ -1332,6 +1386,41 @@ header h1 {
   line-height: 1.7;
   white-space: pre-line;
   font-size: 0.95rem;
+}
+
+.linkedin-post-hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.linkedin-hashtag {
+  background: rgba(10, 102, 194, 0.08);
+  color: #0A66C2;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.linkedin-post-copy-btn {
+  background: #0A66C2;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+
+.linkedin-post-copy-btn:hover {
+  background: #004182;
 }
 
 /* Footer */

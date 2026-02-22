@@ -73,6 +73,8 @@ const IDEA_BONUS_UPLOADS = 5;
 const API_BASE = '/api';
 const UPLOAD_COUNT_KEY = 'uploadgetlink_upload_count';
 const BONUS_UPLOADS_KEY = 'uploadgetlink_bonus_uploads';
+const IDEA_SUBMITTED_KEY = 'uploadgetlink_idea_submitted';
+const GATED_TABS = ['upload', 'ai-jobs', 'automations'];
 
 // ============================================
 // Automations Configuration
@@ -212,9 +214,48 @@ function formatDate(dateString) {
 }
 
 // ============================================
+// Tab Gating (idea submission required)
+// ============================================
+function hasSubmittedIdea() {
+  return localStorage.getItem(IDEA_SUBMITTED_KEY) === 'true';
+}
+
+function markIdeaSubmitted() {
+  localStorage.setItem(IDEA_SUBMITTED_KEY, 'true');
+}
+
+function isTabUnlocked(tabName) {
+  if (accessLevel === 'admin') return true;
+  if (!GATED_TABS.includes(tabName)) return true;
+  return hasSubmittedIdea();
+}
+
+function updateTabAccess() {
+  const unlocked = accessLevel === 'admin' || hasSubmittedIdea();
+  tabButtons.forEach(btn => {
+    const tab = btn.dataset.tab;
+    if (!tab || !GATED_TABS.includes(tab)) return;
+
+    if (unlocked) {
+      btn.classList.remove('tab-locked');
+      btn.removeAttribute('title');
+    } else {
+      btn.classList.add('tab-locked');
+      btn.setAttribute('title', 'Submit an idea first to unlock');
+    }
+  });
+}
+
+// ============================================
 // Tab Navigation
 // ============================================
 function switchTab(tabName) {
+  // Check if tab is locked
+  if (!isTabUnlocked(tabName)) {
+    showLockedMessage();
+    return;
+  }
+
   // Update buttons
   tabButtons.forEach(btn => {
     btn.classList.remove('active');
@@ -254,6 +295,23 @@ tabButtons.forEach(btn => {
     }
   });
 });
+
+function showLockedMessage() {
+  const existing = document.getElementById('locked-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'locked-toast';
+  toast.className = 'locked-toast';
+  toast.innerHTML = '🔒 Submit an idea first to unlock this section!';
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.classList.add('show'), 10);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
 
 // ============================================
 // Authentication
@@ -321,6 +379,7 @@ authForm.addEventListener('submit', async (e) => {
       }
 
       updateUploadCounter();
+      updateTabAccess();
       sessionStorage.setItem('uploadAuth', accessLevel);
       sessionStorage.setItem('uploadEmail', authEmail);
     } else {
@@ -411,6 +470,10 @@ ideaForm.addEventListener('submit', async (e) => {
       hideElement(ideaForm);
       showElement(ideaSuccess);
 
+      // Unlock gated tabs
+      markIdeaSubmitted();
+      updateTabAccess();
+
       // Grant bonus uploads
       if (accessLevel !== 'admin') {
         addBonusUploads(IDEA_BONUS_UPLOADS);
@@ -432,6 +495,14 @@ ideaForm.addEventListener('submit', async (e) => {
 if (viewAiJobsBtn) {
   viewAiJobsBtn.addEventListener('click', () => {
     switchTab('ai-jobs');
+  });
+}
+
+// View Automations button (after successful idea submission)
+const viewAutomationsBtn = document.getElementById('view-automations');
+if (viewAutomationsBtn) {
+  viewAutomationsBtn.addEventListener('click', () => {
+    switchTab('automations');
   });
 }
 
@@ -855,13 +926,24 @@ function showAutomationDetail(automationId) {
 
       <div class="linkedin-post">
         <div class="linkedin-post-header">
-          <span style="font-size:1.5rem;">💼</span>
-          <div>
-            <div style="font-weight:600; color:var(--text-primary);">LinkedIn Post</div>
-            <div style="font-size:0.8rem; color:var(--text-muted);">Share or reference this post</div>
+          <div class="linkedin-post-header-left">
+            <span style="font-size:1.5rem;">💼</span>
+            <div>
+              <div style="font-weight:600; color:var(--text-primary);">LinkedIn Post</div>
+              <div class="linkedin-post-author">By Akhil Reddy | n8n Automation Series</div>
+            </div>
           </div>
+          <button class="linkedin-post-copy-btn" onclick="copyLinkedInPost('${automation.id}')">
+            📋 Copy Post
+          </button>
         </div>
-        <div class="linkedin-post-body">${escapeHtml(automation.linkedinPost)}</div>
+        <div class="linkedin-post-body">${escapeHtml(automation.linkedinPost.replace(/#\w+/g, '').trim())}</div>
+        <div class="linkedin-post-hashtags">
+          ${(automation.linkedinPost.match(/#\w+/g) || []).map(h => `<span class="linkedin-hashtag">${h}</span>`).join('')}
+        </div>
+        <p id="linkedin-copy-feedback" class="feedback hidden" style="text-align:center; margin-top:0.5rem;">
+          Copied to clipboard!
+        </p>
       </div>
 
       <div class="info-card note">
@@ -941,6 +1023,30 @@ async function copyAutomationJSON(automationId) {
   } catch (error) {
     console.error('Copy error:', error);
     alert('Failed to copy workflow JSON. Please try again.');
+  }
+}
+
+async function copyLinkedInPost(automationId) {
+  const automation = AUTOMATIONS.find(a => a.id === automationId);
+  if (!automation) return;
+
+  try {
+    await navigator.clipboard.writeText(automation.linkedinPost);
+  } catch {
+    const textarea = document.createElement('textarea');
+    textarea.value = automation.linkedinPost;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  }
+
+  const feedback = document.getElementById('linkedin-copy-feedback');
+  if (feedback) {
+    showElement(feedback);
+    setTimeout(() => hideElement(feedback), 2000);
   }
 }
 
