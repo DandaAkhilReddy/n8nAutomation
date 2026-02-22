@@ -1,0 +1,684 @@
+{
+  "name": "Job Search Ultimate Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 5
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.resumeUrl || 'YOUR_RESUME_PDF_URL_HERE' }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Download File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 300],
+      "notesInFlow": true,
+      "notes": "Replace YOUR_RESUME_PDF_URL_HERE with the URL to your resume PDF"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "name": "Get row(s) in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 80],
+      "notesInFlow": true,
+      "notes": "Configure: Select your Google Sheet with job search filters (keywords, location, etc.)"
+    },
+    {
+      "parameters": {
+        "url": "https://www.linkedin.com/jobs/search/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "keywords",
+              "value": "={{ $json.keywords || 'software engineer' }}"
+            },
+            {
+              "name": "location",
+              "value": "={{ $json.location || 'United States' }}"
+            },
+            {
+              "name": "f_TPR",
+              "value": "r86400"
+            },
+            {
+              "name": "sortBy",
+              "value": "DD"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-0005-4000-8000-000000000005",
+      "name": "LinkedIn Search URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 80],
+      "notesInFlow": true,
+      "notes": "Searches LinkedIn jobs posted in last 24 hours (f_TPR=r86400)"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.jobUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-0006-4000-8000-000000000006",
+      "name": "Fetch jobs from LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 80]
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "jobTitle",
+              "cssSelector": ".top-card-layout__title"
+            },
+            {
+              "key": "company",
+              "cssSelector": ".topcard__org-name-link"
+            },
+            {
+              "key": "location",
+              "cssSelector": ".topcard__flavor--bullet"
+            },
+            {
+              "key": "description",
+              "cssSelector": ".description__text"
+            },
+            {
+              "key": "jobUrl",
+              "cssSelector": ".topcard__link",
+              "returnValue": "attribute",
+              "attribute": "href"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0007-4000-8000-000000000007",
+      "name": "HTML",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [1100, 80]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "jobTitle",
+        "options": {
+          "include": "allOtherFields"
+        }
+      },
+      "id": "a1b2c3d4-0008-4000-8000-000000000008",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1320, 80]
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "seconds"
+      },
+      "id": "a1b2c3d4-0009-4000-8000-000000000009",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [0, 580],
+      "webhookId": "wait-between-jobs"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.jobUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-0010-4000-8000-000000000010",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 580]
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "fullDescription",
+              "cssSelector": ".description__text"
+            },
+            {
+              "key": "requirements",
+              "cssSelector": ".description__text ul"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0011-4000-8000-000000000011",
+      "name": "HTML1",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [440, 580]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field-job-title",
+              "name": "jobTitle",
+              "value": "={{ $json.jobTitle }}",
+              "type": "string"
+            },
+            {
+              "id": "field-company",
+              "name": "company",
+              "value": "={{ $json.company }}",
+              "type": "string"
+            },
+            {
+              "id": "field-url",
+              "name": "jobUrl",
+              "value": "={{ $json.jobUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "field-description",
+              "name": "fullDescription",
+              "value": "={{ $json.fullDescription }}",
+              "type": "string"
+            },
+            {
+              "id": "field-resume",
+              "name": "resumeText",
+              "value": "={{ $('Extract from File').item.json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0012-4000-8000-000000000012",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, 580]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an expert career coach and job matching AI. Given a resume and a job description, analyze the match and provide:\n1. A match score from 0-100\n2. Key matching skills\n3. Missing skills or gaps\n4. Specific resume improvements for this role\n\nRespond in JSON format:\n{\"matchScore\": number, \"matchingSkills\": [string], \"gaps\": [string], \"resumeTips\": string}"
+        },
+        "promptType": "define",
+        "text": "=Resume:\n{{ $json.resumeText }}\n\n---\n\nJob Title: {{ $json.jobTitle }}\nCompany: {{ $json.company }}\nJob Description:\n{{ $json.fullDescription }}"
+      },
+      "id": "a1b2c3d4-0013-4000-8000-000000000013",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [880, 580]
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.0-flash",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "a1b2c3d4-0014-4000-8000-000000000014",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [880, 780],
+      "credentials": {
+        "googleGeminiApi": {
+          "id": "CONFIGURE_YOUR_GEMINI_CREDENTIAL",
+          "name": "Google Gemini API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field-all-data",
+              "name": "jobData",
+              "value": "={{ JSON.stringify({ jobTitle: $('Edit Fields').item.json.jobTitle, company: $('Edit Fields').item.json.company, jobUrl: $('Edit Fields').item.json.jobUrl, matchAnalysis: $json.output }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0015-4000-8000-000000000015",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1100, 580]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an expert cover letter writer. Given job details and match analysis, write a concise, compelling cover letter (250-350 words) tailored to this specific role.\n\nThe cover letter should:\n- Address the company and role specifically\n- Highlight the candidate's relevant skills from the match analysis\n- Address any gaps constructively\n- Be professional but personable\n- Include a strong opening and call to action\n\nReturn ONLY the cover letter text, no JSON or formatting."
+        },
+        "promptType": "define",
+        "text": "=Write a cover letter for this job:\n\n{{ $json.jobData }}"
+      },
+      "id": "a1b2c3d4-0016-4000-8000-000000000016",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [1320, 580]
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.0-flash",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "a1b2c3d4-0017-4000-8000-000000000017",
+      "name": "Google Gemini Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [1320, 780],
+      "credentials": {
+        "googleGeminiApi": {
+          "id": "CONFIGURE_YOUR_GEMINI_CREDENTIAL",
+          "name": "Google Gemini API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job Title": "={{ JSON.parse($('Edit Fields1').item.json.jobData).jobTitle }}",
+            "Company": "={{ JSON.parse($('Edit Fields1').item.json.jobData).company }}",
+            "URL": "={{ JSON.parse($('Edit Fields1').item.json.jobData).jobUrl }}",
+            "Match Score": "={{ JSON.parse($('Edit Fields1').item.json.jobData).matchAnalysis }}",
+            "Cover Letter": "={{ $json.output }}",
+            "Resume Tips": "={{ JSON.parse($('Edit Fields1').item.json.jobData).matchAnalysis }}",
+            "Date": "={{ new Date().toISOString().split('T')[0] }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0018-4000-8000-000000000018",
+      "name": "Append or update row in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1540, 580],
+      "notesInFlow": true,
+      "notes": "Configure: Select your Google Sheet and sheet name. Columns: Job Title, Company, URL, Match Score, Cover Letter, Resume Tips, Date",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CONFIGURE_YOUR_SHEETS_CREDENTIAL",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a1b2c3d4-0019-4000-8000-000000000019",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1540, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get row(s) in sheet').first().json.email || 'YOUR_EMAIL_HERE' }}",
+        "subject": "=🔍 Daily Job Search Report - {{ new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}",
+        "emailType": "html",
+        "message": "=<h2>🔍 Daily Job Search Report</h2>\n<p>Your automated job search found <strong>{{ $json.totalJobs || 'several' }}</strong> matching positions today.</p>\n<p>📊 <a href=\"YOUR_GOOGLE_SHEET_URL_HERE\">View Full Results in Google Sheets</a></p>\n<p>Here are today's top matches:</p>\n<hr>\n<p><em>This email was sent by your n8n Job Search Automation. Check your Google Sheet for detailed match scores, cover letters, and resume tips.</em></p>",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0020-4000-8000-000000000020",
+      "name": "Send a message",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1760, 300],
+      "notesInFlow": true,
+      "notes": "Configure: Update YOUR_EMAIL_HERE and YOUR_GOOGLE_SHEET_URL_HERE",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CONFIGURE_YOUR_GMAIL_CREDENTIAL",
+          "name": "Gmail OAuth"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Search URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Search URL": {
+      "main": [
+        [
+          {
+            "node": "Fetch jobs from LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch jobs from LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "job-search",
+      "id": "1"
+    },
+    {
+      "name": "ai",
+      "id": "2"
+    },
+    {
+      "name": "linkedin",
+      "id": "3"
+    },
+    {
+      "name": "automation",
+      "id": "4"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-02-22T00:00:00.000Z",
+  "versionId": "1.0.0",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "uploadgetlink-job-search-v1"
+  }
+}
