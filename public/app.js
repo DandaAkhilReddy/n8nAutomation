@@ -869,3 +869,82 @@ function showAutomationDetail(automationId) {
   // Scroll to top of detail view
   automationsContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// ============================================
+// Automation Download / Copy
+// ============================================
+async function downloadAutomationJSON(automationId) {
+  const automation = AUTOMATIONS.find(a => a.id === automationId);
+  if (!automation) return;
+
+  try {
+    const response = await fetch(automation.jsonFile);
+    if (!response.ok) throw new Error('Failed to fetch workflow JSON');
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${automation.id}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    trackAutomationDownload(automation.id, 'download');
+  } catch (error) {
+    console.error('Download error:', error);
+    alert('Failed to download workflow JSON. Please try again.');
+  }
+}
+
+async function copyAutomationJSON(automationId) {
+  const automation = AUTOMATIONS.find(a => a.id === automationId);
+  if (!automation) return;
+
+  try {
+    const response = await fetch(automation.jsonFile);
+    if (!response.ok) throw new Error('Failed to fetch workflow JSON');
+
+    const text = await response.text();
+
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+
+    const feedback = document.getElementById('automation-copy-feedback');
+    if (feedback) {
+      showElement(feedback);
+      setTimeout(() => hideElement(feedback), 2000);
+    }
+
+    trackAutomationDownload(automation.id, 'copy');
+  } catch (error) {
+    console.error('Copy error:', error);
+    alert('Failed to copy workflow JSON. Please try again.');
+  }
+}
+
+function trackAutomationDownload(automationId, action) {
+  fetch(`${API_BASE}/track-download`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Upload-Password': authPassword
+    },
+    body: JSON.stringify({
+      automationId,
+      action,
+      email: authEmail
+    })
+  }).catch(err => console.warn('Track download failed:', err));
+}
