@@ -43,35 +43,54 @@ exports.handler = async (event) => {
       };
     }
 
-    const tableClient = getTableClient();
+    const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+    const emailMap = new Map();
 
-    const emails = [];
+    // 1. Fetch emails from the emails table (login tracking)
     try {
-      const entities = tableClient.listEntities({
+      const emailsClient = TableClient.fromConnectionString(connectionString, 'emails');
+      const entities = emailsClient.listEntities({
         queryOptions: { filter: "PartitionKey eq 'emails'" }
       });
-
       for await (const entity of entities) {
-        emails.push({
-          email: entity.email || entity.rowKey,
+        const addr = (entity.email || entity.rowKey).toLowerCase().trim();
+        emailMap.set(addr, {
+          email: addr,
           firstSeen: entity.firstSeen,
           lastSeen: entity.lastSeen,
           loginCount: entity.loginCount || 1
         });
       }
     } catch (err) {
-      if (err.statusCode === 404) {
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({ emails: [], count: 0 })
-        };
-      }
-      throw err;
+      if (err.statusCode !== 404) throw err;
     }
 
+    // 2. Also fetch emails from the ideas table (old submissions)
+    try {
+      const ideasClient = TableClient.fromConnectionString(connectionString, 'ideas');
+      const ideaEntities = ideasClient.listEntities({
+        queryOptions: { filter: "PartitionKey eq 'ideas'" }
+      });
+      for await (const entity of ideaEntities) {
+        const addr = (entity.email || '').toLowerCase().trim();
+        if (!addr) continue;
+        if (!emailMap.has(addr)) {
+          emailMap.set(addr, {
+            email: addr,
+            firstSeen: entity.timestamp,
+            lastSeen: entity.timestamp,
+            loginCount: 0
+          });
+        }
+      }
+    } catch (err) {
+      if (err.statusCode !== 404) console.warn('Ideas table read error:', err.message);
+    }
+
+    const emails = Array.from(emailMap.values());
+
     // Sort by lastSeen descending (most recent first)
-    emails.sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen));
+    emails.sort((a, b) => new Date(b.lastSeen || 0) - new Date(a.lastSeen || 0));
 
     return {
       statusCode: 200,
