@@ -1,3 +1,56 @@
+const { TableClient } = require('@azure/data-tables');
+
+const EMAILS_TABLE = 'emails';
+
+async function trackEmail(email) {
+  try {
+    const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+    if (!connectionString) return;
+
+    const tableClient = TableClient.fromConnectionString(connectionString, EMAILS_TABLE);
+
+    // Ensure table exists
+    try {
+      await tableClient.createTable();
+    } catch (err) {
+      if (err.statusCode !== 409) return;
+    }
+
+    const now = new Date().toISOString();
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Try to get existing entity
+    let existing = null;
+    try {
+      existing = await tableClient.getEntity('emails', normalizedEmail);
+    } catch (err) {
+      // 404 = new email, not an error
+    }
+
+    if (existing) {
+      await tableClient.upsertEntity({
+        partitionKey: 'emails',
+        rowKey: normalizedEmail,
+        email: normalizedEmail,
+        firstSeen: existing.firstSeen,
+        lastSeen: now,
+        loginCount: (existing.loginCount || 1) + 1
+      }, 'Replace');
+    } else {
+      await tableClient.upsertEntity({
+        partitionKey: 'emails',
+        rowKey: normalizedEmail,
+        email: normalizedEmail,
+        firstSeen: now,
+        lastSeen: now,
+        loginCount: 1
+      }, 'Replace');
+    }
+  } catch (error) {
+    console.error('Email tracking error:', error);
+  }
+}
+
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -45,6 +98,9 @@ exports.handler = async (event) => {
         body: JSON.stringify({ error: 'Please enter a valid email address' })
       };
     }
+
+    // Track email in Azure Table Storage
+    await trackEmail(email.trim());
 
     // Check admin - must match both email AND password
     if (adminPassword && email.toLowerCase().trim() === adminEmail.toLowerCase() && password === adminPassword) {

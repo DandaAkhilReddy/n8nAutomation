@@ -365,21 +365,48 @@
       <!-- Tab: Admin Dashboard (Admin Only) -->
       <div id="tab-dashboard" class="tab-content hidden">
         <div class="dashboard-header">
-          <h2>📊 Submitted Ideas Dashboard</h2>
-          <button id="refresh-ideas" class="btn btn-secondary">🔄 Refresh</button>
+          <h2>📊 Admin Dashboard</h2>
+          <button id="refresh-dashboard" class="btn btn-secondary">🔄 Refresh All</button>
         </div>
 
-        <div id="ideas-loading" class="loading hidden">
-          <div class="spinner"></div>
-          <p>Loading ideas...</p>
+        <!-- Emails Section -->
+        <div class="dashboard-section">
+          <div class="dashboard-section-header">
+            <h3>📧 Collected Emails <span id="email-count" class="count-badge">0</span></h3>
+            <button id="download-emails-csv" class="btn btn-secondary">⬇️ Download CSV</button>
+          </div>
+
+          <div id="emails-loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Loading emails...</p>
+          </div>
+
+          <div id="emails-empty" class="empty-state hidden">
+            <div class="empty-icon">📭</div>
+            <p>No emails collected yet.</p>
+          </div>
+
+          <div id="emails-list" class="emails-list hidden"></div>
         </div>
 
-        <div id="ideas-empty" class="empty-state hidden">
-          <div class="empty-icon">📭</div>
-          <p>No ideas submitted yet.</p>
-        </div>
+        <!-- Ideas Section -->
+        <div class="dashboard-section">
+          <div class="dashboard-section-header">
+            <h3>💡 Submitted Ideas <span id="ideas-count" class="count-badge">0</span></h3>
+          </div>
 
-        <div id="ideas-list" class="ideas-list"></div>
+          <div id="ideas-loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Loading ideas...</p>
+          </div>
+
+          <div id="ideas-empty" class="empty-state hidden">
+            <div class="empty-icon">📭</div>
+            <p>No ideas submitted yet.</p>
+          </div>
+
+          <div id="ideas-list" class="ideas-list"></div>
+        </div>
       </div>
     </div>
 

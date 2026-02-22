@@ -48,10 +48,18 @@ const errorDismiss = document.getElementById('error-dismiss');
 const uploadCounter = document.getElementById('upload-counter');
 
 // Dashboard Elements
-const refreshIdeasBtn = document.getElementById('refresh-ideas');
+const refreshDashboardBtn = document.getElementById('refresh-dashboard');
 const ideasLoading = document.getElementById('ideas-loading');
 const ideasEmpty = document.getElementById('ideas-empty');
 const ideasList = document.getElementById('ideas-list');
+const ideasCount = document.getElementById('ideas-count');
+
+// Email Dashboard Elements
+const emailCount = document.getElementById('email-count');
+const downloadEmailsCsvBtn = document.getElementById('download-emails-csv');
+const emailsLoading = document.getElementById('emails-loading');
+const emailsEmpty = document.getElementById('emails-empty');
+const emailsList = document.getElementById('emails-list');
 
 // ============================================
 // State
@@ -276,6 +284,7 @@ function switchTab(tabName) {
 
   // Load dashboard data if switching to dashboard
   if (tabName === 'dashboard' && accessLevel === 'admin') {
+    loadEmails();
     loadIdeas();
   }
 
@@ -518,6 +527,103 @@ if (submitAnotherIdea) {
 // ============================================
 // Admin Dashboard
 // ============================================
+async function loadEmails() {
+  if (accessLevel !== 'admin') return;
+
+  showElement(emailsLoading);
+  hideElement(emailsEmpty);
+  hideElement(emailsList);
+
+  try {
+    const response = await fetch(`${API_BASE}/get-emails`, {
+      headers: {
+        'X-Upload-Password': authPassword
+      }
+    });
+
+    const data = await response.json();
+    hideElement(emailsLoading);
+
+    if (response.ok && data.emails) {
+      if (emailCount) emailCount.textContent = data.count || data.emails.length;
+
+      if (data.emails.length === 0) {
+        showElement(emailsEmpty);
+      } else {
+        renderEmails(data.emails);
+        showElement(emailsList);
+      }
+    } else {
+      emailsList.innerHTML = `<div class="error-box"><p>${data.error || 'Failed to load emails'}</p></div>`;
+      showElement(emailsList);
+    }
+  } catch (error) {
+    console.error('Load emails error:', error);
+    hideElement(emailsLoading);
+    emailsList.innerHTML = '<div class="error-box"><p>Connection error. Please try again.</p></div>';
+    showElement(emailsList);
+  }
+}
+
+function renderEmails(emails) {
+  emailsList.innerHTML = `
+    <table class="emails-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>First Seen</th>
+          <th>Last Seen</th>
+          <th>Logins</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${emails.map(e => `
+          <tr>
+            <td class="email-cell">${escapeHtml(e.email)}</td>
+            <td>${formatDate(e.firstSeen)}</td>
+            <td>${formatDate(e.lastSeen)}</td>
+            <td>${e.loginCount}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function downloadEmailsCsv() {
+  fetch(`${API_BASE}/get-emails`, {
+    headers: { 'X-Upload-Password': authPassword }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.emails || data.emails.length === 0) {
+      alert('No emails to download.');
+      return;
+    }
+    const csvRows = ['Email,First Seen,Last Seen,Login Count'];
+    data.emails.forEach(e => {
+      csvRows.push(`${e.email},${e.firstSeen},${e.lastSeen},${e.loginCount}`);
+    });
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `emails-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  })
+  .catch(error => {
+    console.error('CSV download error:', error);
+    alert('Failed to download emails. Please try again.');
+  });
+}
+
+if (downloadEmailsCsvBtn) {
+  downloadEmailsCsvBtn.addEventListener('click', downloadEmailsCsv);
+}
+
 async function loadIdeas() {
   if (accessLevel !== 'admin') return;
 
@@ -537,6 +643,7 @@ async function loadIdeas() {
     hideElement(ideasLoading);
 
     if (response.ok && data.ideas) {
+      if (ideasCount) ideasCount.textContent = data.ideas.length;
       if (data.ideas.length === 0) {
         showElement(ideasEmpty);
       } else {
@@ -580,8 +687,11 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-if (refreshIdeasBtn) {
-  refreshIdeasBtn.addEventListener('click', loadIdeas);
+if (refreshDashboardBtn) {
+  refreshDashboardBtn.addEventListener('click', () => {
+    loadEmails();
+    loadIdeas();
+  });
 }
 
 // ============================================
