@@ -296,6 +296,7 @@ authForm.addEventListener('submit', async (e) => {
       authPassword = password;
       authEmail = data.email || email;
       accessLevel = data.accessLevel || 'public';
+      localStorage.removeItem(IDEA_SUBMITTED_KEY);
 
       hideElement(authScreen);
       showElement(mainScreen);
