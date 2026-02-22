@@ -34,7 +34,7 @@
         <div class="auth-header">
           <div class="auth-icon">🚀</div>
           <h2>Welcome! Enter Your Email</h2>
-          <p class="auth-subtitle">Access free automation workflows, upload files & submit ideas</p>
+          <p class="auth-subtitle">Access free automation workflows & submit ideas</p>
         </div>
 
         <form id="auth-form">
@@ -79,8 +79,6 @@
       <!-- Tab Navigation -->
       <nav class="tab-nav">
         <button class="tab-btn active" data-tab="ideas">💡 Submit Idea</button>
-        <button class="tab-btn" data-tab="upload">📤 Upload Files</button>
-        <button class="tab-btn" data-tab="ai-jobs">💰 AI Jobs</button>
         <button class="tab-btn" data-tab="automations">🤖 n8n Automations</button>
         <button class="tab-btn admin-only hidden" data-tab="dashboard">📊 Dashboard</button>
       </nav>
@@ -92,8 +90,8 @@
           <p>Describe your daily frustration or business idea, and I'll create a working automation or software for you - <strong>completely FREE</strong>.</p>
           <div class="trust-badges">
             <span class="trust-badge">✅ No hidden costs</span>
-            <span class="trust-badge">⚡ Delivered in 1 week</span>
-            <span class="trust-badge">🔒 Your idea stays yours</span>
+            <span class="trust-badge">⚡ 1 new automation every day</span>
+            <span class="trust-badge">🤝 Your idea helps the community</span>
           </div>
         </div>
 
@@ -124,235 +122,14 @@
         <div id="idea-success" class="success-box hidden">
           <div class="success-icon">🎉</div>
           <h3>Idea Submitted Successfully!</h3>
-          <p>Thank you for sharing your idea. I'll review it and get back to you within a week with a working solution!</p>
+          <p>I'm helping my LinkedIn family every day with 1 new automation. Your idea helps the community!</p>
           <div class="bonus-alert">
             <span class="bonus-icon">🔓</span>
-            <span>All sections are now <strong>unlocked</strong> — explore n8n Automations, AI Jobs & Upload Files!</span>
-          </div>
-          <div class="bonus-alert">
-            <span class="bonus-icon">🎁</span>
-            <span>You've also earned <strong>5 bonus uploads</strong> for submitting an idea!</span>
+            <span>n8n Automations are now <strong>unlocked</strong> — browse and download free workflows!</span>
           </div>
           <div class="success-actions">
-            <button id="view-ai-jobs" class="btn btn-primary">💰 Check AI Jobs to Earn Money</button>
             <button id="view-automations" class="btn btn-primary">🤖 Browse n8n Automations</button>
             <button id="submit-another-idea" class="btn btn-outline">Submit Another Idea</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab: Upload Files -->
-      <div id="tab-upload" class="tab-content hidden">
-        <div id="upload-counter" class="upload-counter hidden"></div>
-
-        <!-- Drop Zone -->
-        <div id="drop-zone" class="drop-zone">
-          <div class="drop-zone-content">
-            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            <p class="drop-text">Drag & drop files here</p>
-            <p class="drop-subtext">or</p>
-            <label class="btn btn-secondary">
-              Browse Files
-              <input type="file" id="file-input" hidden>
-            </label>
-          </div>
-        </div>
-
-        <!-- File Info -->
-        <div id="file-info" class="file-info hidden">
-          <span id="file-name"></span>
-          <span id="file-size"></span>
-          <button id="remove-file" class="btn-icon" title="Remove file">&times;</button>
-        </div>
-
-        <!-- Progress Bar -->
-        <div id="progress-container" class="progress-container hidden">
-          <div class="progress-bar">
-            <div id="progress-fill" class="progress-fill"></div>
-          </div>
-          <span id="progress-text">0%</span>
-        </div>
-
-        <!-- Upload Button -->
-        <button id="upload-btn" class="btn btn-primary btn-large" disabled>
-          Upload File
-        </button>
-
-        <!-- Result Section -->
-        <div id="result" class="result hidden">
-          <h3>✅ Your link is ready!</h3>
-          <div class="link-box">
-            <input type="text" id="result-link" readonly>
-            <button id="copy-btn" class="btn btn-secondary">Copy</button>
-          </div>
-          <p id="copy-feedback" class="feedback hidden">Copied to clipboard!</p>
-          <button id="upload-another" class="btn btn-outline">Upload Another File</button>
-        </div>
-
-        <!-- Error Display -->
-        <div id="upload-error" class="error-box hidden">
-          <p id="upload-error-message"></p>
-          <button id="error-dismiss" class="btn btn-outline">Try Again</button>
-        </div>
-
-        <div class="file-types">
-          <p>Allowed: PDF, Word, Excel, PowerPoint, Images, ZIP, and more</p>
-          <p>Max file size: 4.5 MB</p>
-        </div>
-      </div>
-
-      <!-- Tab: AI Jobs -->
-      <div id="tab-ai-jobs" class="tab-content hidden">
-        <div class="ai-jobs-content">
-          <div class="ai-hero">
-            <h2>💰 Earn $10-$200/Hour Training AI</h2>
-            <p>The AI gold rush isn't only for builders. It's also for trainers!</p>
-          </div>
-
-          <div class="info-card">
-            <h3>🎯 What is AI Training?</h3>
-            <p>Companies are actively hiring people to:</p>
-            <ul>
-              <li>Label and review data</li>
-              <li>Improve AI responses</li>
-              <li>Test reasoning and edge cases</li>
-              <li>Train domain-specific AI (tech, finance, language, logic)</li>
-            </ul>
-          </div>
-
-          <div class="info-card highlight">
-            <h3>📊 Top Platforms Hiring Now</h3>
-            <table class="platform-table">
-              <thead>
-                <tr>
-                  <th>Platform</th>
-                  <th>Pay Range</th>
-                  <th>Best For</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><a href="https://www.dataannotation.tech" target="_blank">DataAnnotation.tech</a></td>
-                  <td>$20-50/hr</td>
-                  <td>General + Coding</td>
-                </tr>
-                <tr>
-                  <td><a href="https://outlier.ai" target="_blank">Outlier AI</a></td>
-                  <td>$15-50/hr</td>
-                  <td>STEM Expertise</td>
-                </tr>
-                <tr>
-                  <td><a href="https://appen.com" target="_blank">Appen</a></td>
-                  <td>$10-20/hr</td>
-                  <td>Stable Basic Work</td>
-                </tr>
-                <tr>
-                  <td><a href="https://www.remotasks.com" target="_blank">Remotasks</a></td>
-                  <td>$2-18/hr</td>
-                  <td>LiDAR Only</td>
-                </tr>
-                <tr>
-                  <td><a href="https://www.telusdigital.com" target="_blank">TELUS Digital</a></td>
-                  <td>$8-20/hr</td>
-                  <td>Long-term Contracts</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="info-card">
-            <h3>🔥 Skills That Pay Most</h3>
-            <div class="skill-grid">
-              <div class="skill-item">
-                <span class="skill-icon">💻</span>
-                <span class="skill-name">Coding (Python, JS)</span>
-                <span class="skill-pay">$30-55/hr</span>
-              </div>
-              <div class="skill-item">
-                <span class="skill-icon">⚕️</span>
-                <span class="skill-name">Medical Professionals</span>
-                <span class="skill-pay">$50-170/hr</span>
-              </div>
-              <div class="skill-item">
-                <span class="skill-icon">⚖️</span>
-                <span class="skill-name">Attorneys</span>
-                <span class="skill-pay">$50-130/hr</span>
-              </div>
-              <div class="skill-item">
-                <span class="skill-icon">📈</span>
-                <span class="skill-name">Finance (CPA, Banking)</span>
-                <span class="skill-pay">$50-120/hr</span>
-              </div>
-              <div class="skill-item">
-                <span class="skill-icon">🔬</span>
-                <span class="skill-name">PhD Scientists</span>
-                <span class="skill-pay">$40-60/hr</span>
-              </div>
-              <div class="skill-item">
-                <span class="skill-icon">🌍</span>
-                <span class="skill-name">Languages (Spanish, etc)</span>
-                <span class="skill-pay">$20+/hr</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="info-card">
-            <h3>📈 Realistic Earnings</h3>
-            <table class="earnings-table">
-              <thead>
-                <tr>
-                  <th>Effort Level</th>
-                  <th>Time</th>
-                  <th>Monthly Earnings</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Casual</td>
-                  <td>15 min/day</td>
-                  <td>$30-60</td>
-                </tr>
-                <tr>
-                  <td>Part-Time</td>
-                  <td>1-2 hours/day</td>
-                  <td>$200-500</td>
-                </tr>
-                <tr>
-                  <td>Serious Side Hustle</td>
-                  <td>20-30 hours/week</td>
-                  <td>$1,000-2,000</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="info-card">
-            <h3>🚀 How to Get Started</h3>
-            <ol class="steps-list">
-              <li>Update your LinkedIn & prepare your resume</li>
-              <li>Start with <a href="https://www.dataannotation.tech" target="_blank">DataAnnotation.tech</a> (best for beginners)</li>
-              <li>Apply to 3-5 platforms to hedge against dry spells</li>
-              <li>Focus on quality over speed - high accuracy unlocks better projects</li>
-              <li>Complete additional qualification tests to unlock higher-paying work</li>
-            </ol>
-          </div>
-
-          <div class="info-card note">
-            <h3>⚠️ Important Note</h3>
-            <p>Work availability fluctuates unpredictably. This is best treated as <strong>supplemental income</strong> rather than primary employment. Apply to multiple platforms and be patient during dry spells.</p>
-          </div>
-
-          <div class="cta-section">
-            <p>🔗 Reddit Communities for Discussion:</p>
-            <div class="reddit-links">
-              <a href="https://reddit.com/r/beermoney" target="_blank">r/beermoney</a>
-              <a href="https://reddit.com/r/WorkOnline" target="_blank">r/WorkOnline</a>
-              <a href="https://reddit.com/r/sidehustle" target="_blank">r/sidehustle</a>
-            </div>
           </div>
         </div>
       </div>
@@ -411,7 +188,7 @@
     </div>
 
     <footer>
-      <p>Built with ❤️ by Akhil Reddy | <a href="https://github.com/DandaAkhilReddy/n8nAutomation" target="_blank">GitHub</a></p>
+      <p>Built with ❤️ by <a href="https://www.linkedin.com/in/akhil-reddy-danda-1a74b214b/" target="_blank">Akhil Reddy</a></p>
     </footer>
   </div>
 

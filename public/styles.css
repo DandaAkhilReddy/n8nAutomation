@@ -87,6 +87,8 @@ header h1 {
   font-weight: 800;
   color: var(--primary-dark);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .tagline {
@@ -1254,6 +1256,56 @@ header h1 {
   border-top: 1px solid var(--border-light);
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.automation-card-day {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.automation-day-badge {
+  display: inline-block;
+  background: var(--primary-bg);
+  color: var(--primary-dark);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  margin-bottom: 0.75rem;
+}
+
+/* LinkedIn Button */
+.btn-linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #0A66C2;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+  margin-top: 0.75rem;
+  text-align: center;
+  justify-content: center;
+}
+
+.btn-linkedin:hover {
+  background: #004182;
+  color: white;
+}
+
+.btn-linkedin.btn-large {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
 }
 
 /* Automation Detail View */

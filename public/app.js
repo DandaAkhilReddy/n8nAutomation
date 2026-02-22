@@ -24,28 +24,6 @@ const ideaBillion = document.getElementById('idea-billion');
 const submitIdeaBtn = document.getElementById('submit-idea-btn');
 const ideaSuccess = document.getElementById('idea-success');
 const submitAnotherIdea = document.getElementById('submit-another-idea');
-const viewAiJobsBtn = document.getElementById('view-ai-jobs');
-
-// Upload Elements
-const dropZone = document.getElementById('drop-zone');
-const fileInput = document.getElementById('file-input');
-const fileInfo = document.getElementById('file-info');
-const fileName = document.getElementById('file-name');
-const fileSize = document.getElementById('file-size');
-const removeFileBtn = document.getElementById('remove-file');
-const progressContainer = document.getElementById('progress-container');
-const progressFill = document.getElementById('progress-fill');
-const progressText = document.getElementById('progress-text');
-const uploadBtn = document.getElementById('upload-btn');
-const resultSection = document.getElementById('result');
-const resultLink = document.getElementById('result-link');
-const copyBtn = document.getElementById('copy-btn');
-const copyFeedback = document.getElementById('copy-feedback');
-const uploadAnotherBtn = document.getElementById('upload-another');
-const uploadError = document.getElementById('upload-error');
-const uploadErrorMessage = document.getElementById('upload-error-message');
-const errorDismiss = document.getElementById('error-dismiss');
-const uploadCounter = document.getElementById('upload-counter');
 
 // Dashboard Elements
 const refreshDashboardBtn = document.getElementById('refresh-dashboard');
@@ -64,7 +42,6 @@ const emailsList = document.getElementById('emails-list');
 // ============================================
 // State
 // ============================================
-let selectedFile = null;
 let authPassword = null;
 let authEmail = null;
 let accessLevel = null; // 'admin' or 'public'
@@ -72,15 +49,9 @@ let accessLevel = null; // 'admin' or 'public'
 // ============================================
 // Constants
 // ============================================
-const PUBLIC_MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
-const ADMIN_MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB (limited by Netlify)
-const PUBLIC_MAX_UPLOADS = 10;
-const IDEA_BONUS_UPLOADS = 5;
 const API_BASE = '/api';
-const UPLOAD_COUNT_KEY = 'n8nautomations_upload_count';
-const BONUS_UPLOADS_KEY = 'n8nautomations_bonus_uploads';
 const IDEA_SUBMITTED_KEY = 'n8nautomations_idea_submitted';
-const GATED_TABS = ['upload', 'ai-jobs', 'automations'];
+const GATED_TABS = ['automations'];
 
 // ============================================
 // Automations Configuration
@@ -88,6 +59,8 @@ const GATED_TABS = ['upload', 'ai-jobs', 'automations'];
 const AUTOMATIONS = [
   {
     id: 'job-search-ultimate',
+    day: 1,
+    date: 'Feb 22, 2026',
     icon: '🔍',
     title: 'Job Search Ultimate Workflow',
     shortDesc: 'Automated daily job search: resume parsing, LinkedIn matching, AI scoring, cover letter generation, and email summary.',
@@ -95,6 +68,7 @@ const AUTOMATIONS = [
     difficulty: 'Intermediate',
     estimatedSetup: '30 min',
     jsonFile: '/automations/job-search-workflow.json',
+    linkedinUrl: 'https://www.linkedin.com/posts/akhil-reddy-danda-1a74b214b_resume-personalise-n8n-activity-7431095739637829633-Keog?utm_source=share&utm_medium=member_desktop&rcm=ACoAACQz6Y8BJnaLIxebO1oXTo0ei3-1-d4gJqs',
     linkedinPost: `I applied to over 2000 jobs last year, and all I got were rejections, until I changed this one thing.
 
 You see, clearing interviews is not just about mass applying to every role you find, you must have heard people say it a 100 times that you need to cater your resume to the exact role you are applying for, not just make it "ATS friendly".
@@ -144,7 +118,7 @@ If I had something like this when I was applying I would have saved soo much tim
       'Set up a Google Cloud project and enable the Gemini API — get your API key from Google AI Studio (ai.google.dev)',
       'Create a Google Sheet with columns: Job Title, Company, URL, Match Score, Cover Letter, Resume Tips, Date',
       'Configure Google Sheets and Gmail OAuth credentials in n8n (follow n8n docs for Google OAuth setup)',
-      'Upload your resume PDF to a publicly accessible URL (you can use the Upload tab on this site!)',
+      'Upload your resume PDF to a publicly accessible URL (Google Drive, Dropbox, etc.)',
       'Update the "Download File" node with your resume PDF URL',
       'Update the "LinkedIn Search" node with your job search keywords, location, and filters',
       'Set the Schedule Trigger to your preferred time (default: 5 AM daily)',
@@ -156,56 +130,12 @@ If I had something like this when I was applying I would have saved soo much tim
 // ============================================
 // Utility Functions
 // ============================================
-function formatFileSize(bytes) {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
 function showElement(el) {
   if (el) el.classList.remove('hidden');
 }
 
 function hideElement(el) {
   if (el) el.classList.add('hidden');
-}
-
-function getUploadCount() {
-  return parseInt(localStorage.getItem(UPLOAD_COUNT_KEY) || '0', 10);
-}
-
-function incrementUploadCount() {
-  const count = getUploadCount() + 1;
-  localStorage.setItem(UPLOAD_COUNT_KEY, count.toString());
-  return count;
-}
-
-function getBonusUploads() {
-  return parseInt(localStorage.getItem(BONUS_UPLOADS_KEY) || '0', 10);
-}
-
-function addBonusUploads(count) {
-  const current = getBonusUploads();
-  localStorage.setItem(BONUS_UPLOADS_KEY, (current + count).toString());
-  return current + count;
-}
-
-function getMaxFileSize() {
-  return accessLevel === 'admin' ? ADMIN_MAX_FILE_SIZE : PUBLIC_MAX_FILE_SIZE;
-}
-
-function canUpload() {
-  if (accessLevel === 'admin') return true;
-  const used = getUploadCount();
-  const bonus = getBonusUploads();
-  const totalAllowed = PUBLIC_MAX_UPLOADS + bonus;
-  return used < totalAllowed;
-}
-
-function getTotalAllowedUploads() {
-  return PUBLIC_MAX_UPLOADS + getBonusUploads();
 }
 
 function formatDate(dateString) {
@@ -385,10 +315,7 @@ authForm.addEventListener('submit', async (e) => {
         });
       }
 
-      updateUploadCounter();
       updateTabAccess();
-      sessionStorage.setItem('uploadAuth', accessLevel);
-      sessionStorage.setItem('uploadEmail', authEmail);
     } else {
       authError.textContent = data.error || 'Please enter a valid email address';
       if (passwordInput) passwordInput.value = '';
@@ -408,10 +335,6 @@ if (logoutBtn) {
     authPassword = null;
     authEmail = null;
     accessLevel = null;
-
-    // Clear session storage
-    sessionStorage.removeItem('uploadAuth');
-    sessionStorage.removeItem('uploadEmail');
 
     // Reset UI
     hideElement(mainScreen);
@@ -478,12 +401,6 @@ ideaForm.addEventListener('submit', async (e) => {
       // Unlock gated tabs
       markIdeaSubmitted();
       updateTabAccess();
-
-      // Grant bonus uploads
-      if (accessLevel !== 'admin') {
-        addBonusUploads(IDEA_BONUS_UPLOADS);
-        updateUploadCounter();
-      }
     } else {
       alert(data.error || 'Failed to submit idea. Please try again.');
     }
@@ -495,13 +412,6 @@ ideaForm.addEventListener('submit', async (e) => {
     submitIdeaBtn.textContent = '🚀 Submit My Idea';
   }
 });
-
-// View AI Jobs button (after successful idea submission)
-if (viewAiJobsBtn) {
-  viewAiJobsBtn.addEventListener('click', () => {
-    switchTab('ai-jobs');
-  });
-}
 
 // View Automations button (after successful idea submission)
 const viewAutomationsBtn = document.getElementById('view-automations');
@@ -695,232 +605,6 @@ if (refreshDashboardBtn) {
 }
 
 // ============================================
-// File Upload
-// ============================================
-function updateUploadCounter() {
-  if (!uploadCounter) return;
-
-  if (accessLevel === 'admin') {
-    hideElement(uploadCounter);
-    return;
-  }
-
-  const count = getUploadCount();
-  const totalAllowed = getTotalAllowedUploads();
-  const remaining = totalAllowed - count;
-  const bonus = getBonusUploads();
-
-  let text = `${remaining} uploads remaining (${count}/${totalAllowed} used)`;
-  if (bonus > 0) {
-    text += ` • ${bonus} bonus from ideas`;
-  }
-
-  uploadCounter.textContent = text;
-  uploadCounter.classList.remove('warning', 'limit-reached', 'hidden');
-  showElement(uploadCounter);
-
-  if (remaining <= 0) {
-    uploadCounter.classList.add('limit-reached');
-    uploadCounter.textContent = `Upload limit reached (${count}/${totalAllowed}) - Submit an idea for 5 more!`;
-  } else if (remaining <= 3) {
-    uploadCounter.classList.add('warning');
-  }
-}
-
-function resetUploadUI() {
-  selectedFile = null;
-  if (fileInput) fileInput.value = '';
-  hideElement(fileInfo);
-  hideElement(progressContainer);
-  hideElement(resultSection);
-  hideElement(uploadError);
-  if (uploadBtn) {
-    uploadBtn.disabled = true;
-    uploadBtn.textContent = 'Upload File';
-  }
-  if (progressFill) progressFill.style.width = '0%';
-  if (progressText) progressText.textContent = '0%';
-  showElement(dropZone);
-  updateUploadCounter();
-
-  if (!canUpload() && uploadBtn) {
-    uploadBtn.disabled = true;
-    uploadBtn.textContent = 'Upload Limit Reached';
-  }
-}
-
-function showUploadError(message) {
-  if (uploadErrorMessage) uploadErrorMessage.textContent = message;
-  showElement(uploadError);
-}
-
-// Drag and Drop
-if (dropZone) {
-  dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.classList.add('drag-over');
-  });
-
-  dropZone.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-  });
-
-  dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-
-    if (!canUpload()) {
-      showUploadError('You have reached the upload limit. Submit an idea for 5 more uploads!');
-      return;
-    }
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleFileSelect(files[0]);
-    }
-  });
-}
-
-// File Input
-if (fileInput) {
-  fileInput.addEventListener('change', (e) => {
-    if (!canUpload()) {
-      showUploadError('You have reached the upload limit. Submit an idea for 5 more uploads!');
-      e.target.value = '';
-      return;
-    }
-
-    if (e.target.files.length > 0) {
-      handleFileSelect(e.target.files[0]);
-    }
-  });
-}
-
-function handleFileSelect(file) {
-  const maxSize = getMaxFileSize();
-
-  if (file.size > maxSize) {
-    showUploadError(`File is too large. Maximum size is ${formatFileSize(maxSize)}`);
-    return;
-  }
-
-  selectedFile = file;
-  if (fileName) fileName.textContent = file.name;
-  if (fileSize) fileSize.textContent = formatFileSize(file.size);
-  showElement(fileInfo);
-  if (uploadBtn) uploadBtn.disabled = false;
-  hideElement(uploadError);
-  hideElement(resultSection);
-}
-
-// Remove File
-if (removeFileBtn) {
-  removeFileBtn.addEventListener('click', resetUploadUI);
-}
-
-// Upload Button
-if (uploadBtn) {
-  uploadBtn.addEventListener('click', async () => {
-    if (!selectedFile || !authPassword) return;
-
-    if (!canUpload()) {
-      showUploadError('You have reached the upload limit. Submit an idea for 5 more uploads!');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
-    hideElement(dropZone);
-    hideElement(fileInfo);
-    showElement(progressContainer);
-    uploadBtn.disabled = true;
-
-    try {
-      const xhr = new XMLHttpRequest();
-
-      const uploadPromise = new Promise((resolve, reject) => {
-        xhr.upload.addEventListener('progress', (e) => {
-          if (e.lengthComputable) {
-            const percent = Math.round((e.loaded / e.total) * 100);
-            if (progressFill) progressFill.style.width = percent + '%';
-            if (progressText) progressText.textContent = percent + '%';
-          }
-        });
-
-        xhr.addEventListener('load', () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(JSON.parse(xhr.responseText));
-          } else {
-            try {
-              reject(JSON.parse(xhr.responseText));
-            } catch {
-              reject({ error: 'Upload failed' });
-            }
-          }
-        });
-
-        xhr.addEventListener('error', () => {
-          reject({ error: 'Network error' });
-        });
-
-        xhr.open('POST', `${API_BASE}/upload`);
-        xhr.setRequestHeader('X-Upload-Password', authPassword);
-        xhr.send(formData);
-      });
-
-      const result = await uploadPromise;
-
-      if (accessLevel !== 'admin') {
-        incrementUploadCount();
-      }
-
-      hideElement(progressContainer);
-      if (resultLink) resultLink.value = result.url;
-      showElement(resultSection);
-      updateUploadCounter();
-
-    } catch (error) {
-      console.error('Upload error:', error);
-      hideElement(progressContainer);
-      showUploadError(error.error || error.message || 'Upload failed. Please try again.');
-      showElement(dropZone);
-      uploadBtn.disabled = false;
-    }
-  });
-}
-
-// Copy Link
-if (copyBtn) {
-  copyBtn.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(resultLink.value);
-      showElement(copyFeedback);
-      setTimeout(() => hideElement(copyFeedback), 2000);
-    } catch (error) {
-      resultLink.select();
-      document.execCommand('copy');
-      showElement(copyFeedback);
-      setTimeout(() => hideElement(copyFeedback), 2000);
-    }
-  });
-}
-
-// Upload Another
-if (uploadAnotherBtn) {
-  uploadAnotherBtn.addEventListener('click', resetUploadUI);
-}
-
-// Error Dismiss
-if (errorDismiss) {
-  errorDismiss.addEventListener('click', () => {
-    hideElement(uploadError);
-    resetUploadUI();
-  });
-}
-
-// ============================================
 // n8n Automations Tab
 // ============================================
 const automationsContent = document.getElementById('automations-content');
@@ -937,6 +621,7 @@ function renderAutomationsGrid() {
 
   const cardsHTML = AUTOMATIONS.map(a => `
     <div class="automation-card" data-automation-id="${a.id}" onclick="showAutomationDetail('${a.id}')">
+      <div class="automation-card-day">Day ${a.day} — ${a.date}</div>
       <div class="automation-card-icon">${a.icon}</div>
       <div class="automation-card-title">${a.title}</div>
       <div class="automation-card-desc">${a.shortDesc}</div>
@@ -947,6 +632,7 @@ function renderAutomationsGrid() {
         <span>⏱️ Setup: ${a.estimatedSetup}</span>
         <span>📊 ${a.difficulty}</span>
       </div>
+      ${a.linkedinUrl ? `<a href="${a.linkedinUrl}" target="_blank" class="btn btn-linkedin" onclick="event.stopPropagation()">🔗 View on LinkedIn</a>` : ''}
     </div>
   `).join('');
 
@@ -986,9 +672,11 @@ function showAutomationDetail(automationId) {
       </button>
 
       <div class="automation-hero">
+        <div class="automation-day-badge">Day ${automation.day} — ${automation.date}</div>
         <div style="font-size:2.5rem; margin-bottom:0.5rem;">${automation.icon}</div>
         <h2>${automation.title}</h2>
         <p>${automation.shortDesc}</p>
+        ${automation.linkedinUrl ? `<a href="${automation.linkedinUrl}" target="_blank" class="btn btn-linkedin btn-large" style="margin-top:1rem;">🔗 View LinkedIn Post</a>` : ''}
       </div>
 
       <div class="info-card highlight">
@@ -1052,7 +740,7 @@ function showAutomationDetail(automationId) {
         <ul style="padding-left:1.5rem; color:var(--text-secondary);">
           <li>LinkedIn may rate-limit automated requests. The workflow includes Wait nodes to respect rate limits.</li>
           <li>Google Gemini free tier allows 60 requests/minute — more than enough for daily job search.</li>
-          <li>Your resume PDF must be at a publicly accessible URL. Use the Upload tab on this site!</li>
+          <li>Your resume PDF must be at a publicly accessible URL (Google Drive, Dropbox, etc.).</li>
           <li>This workflow is designed for n8n self-hosted or n8n Cloud.</li>
         </ul>
       </div>
