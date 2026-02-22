@@ -228,6 +228,10 @@ tabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const tabName = btn.dataset.tab;
     if (tabName) {
+      if (!isTabUnlocked(tabName)) {
+        showLockedMessage();
+        return;
+      }
       switchTab(tabName);
     }
   });
@@ -335,6 +339,7 @@ if (logoutBtn) {
     authPassword = null;
     authEmail = null;
     accessLevel = null;
+    localStorage.removeItem(IDEA_SUBMITTED_KEY);
 
     // Reset UI
     hideElement(mainScreen);
