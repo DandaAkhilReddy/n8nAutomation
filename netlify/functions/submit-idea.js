@@ -42,10 +42,10 @@ exports.handler = async (event) => {
 
     // Parse request body
     const body = JSON.parse(event.body);
-    const { email, name, problem, solution, billion } = body;
+    const { email, problem, billion } = body;
 
     // Validate required fields
-    if (!email || !problem || !solution || !billion) {
+    if (!email || !problem || !billion) {
       return {
         statusCode: 400,
         headers,
@@ -74,9 +74,7 @@ exports.handler = async (event) => {
       partitionKey: 'ideas',
       rowKey: rowKey,
       email: email,
-      name: name || 'Anonymous',
       problem: problem,
-      solution: solution,
       billion: billion,
       timestamp: timestamp
     };

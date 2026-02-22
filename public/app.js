@@ -19,9 +19,7 @@ const tabContents = document.querySelectorAll('.tab-content');
 // Idea Form Elements
 const ideaForm = document.getElementById('idea-form');
 const ideaEmail = document.getElementById('idea-email');
-const ideaName = document.getElementById('idea-name');
 const ideaProblem = document.getElementById('idea-problem');
-const ideaSolution = document.getElementById('idea-solution');
 const ideaBillion = document.getElementById('idea-billion');
 const submitIdeaBtn = document.getElementById('submit-idea-btn');
 const ideaSuccess = document.getElementById('idea-success');
@@ -439,14 +437,12 @@ ideaForm.addEventListener('submit', async (e) => {
 
   const idea = {
     email: ideaEmail.value.trim(),
-    name: ideaName.value.trim() || 'Anonymous',
     problem: ideaProblem.value.trim(),
-    solution: ideaSolution.value.trim(),
     billion: ideaBillion.value.trim()
   };
 
   // Validate
-  if (!idea.email || !idea.problem || !idea.solution || !idea.billion) {
+  if (!idea.email || !idea.problem || !idea.billion) {
     alert('Please fill in all required fields');
     return;
   }
@@ -566,14 +562,9 @@ function renderIdeas(ideas) {
         <span class="idea-card-email">${escapeHtml(idea.email)}</span>
         <span class="idea-card-date">${formatDate(idea.timestamp)}</span>
       </div>
-      ${idea.name && idea.name !== 'Anonymous' ? `<div class="idea-card-name">👤 ${escapeHtml(idea.name)}</div>` : ''}
       <div class="idea-card-section">
-        <h4>🔥 Problem to Automate</h4>
+        <h4>🤖 Automation Request</h4>
         <p>${escapeHtml(idea.problem)}</p>
-      </div>
-      <div class="idea-card-section">
-        <h4>💡 Proposed Solution</h4>
-        <p>${escapeHtml(idea.solution)}</p>
       </div>
       <div class="idea-card-section">
         <h4>🚀 Billion-Dollar Idea</h4>

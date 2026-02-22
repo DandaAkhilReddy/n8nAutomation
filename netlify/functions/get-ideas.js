@@ -58,9 +58,7 @@ exports.handler = async (event) => {
         ideas.push({
           id: entity.rowKey,
           email: entity.email,
-          name: entity.name,
           problem: entity.problem,
-          solution: entity.solution,
           billion: entity.billion,
           timestamp: entity.timestamp
         });
