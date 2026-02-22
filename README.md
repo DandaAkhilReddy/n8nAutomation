@@ -33,6 +33,31 @@ UploadGetLink is a simple, fast, and secure file sharing service. Upload any fil
 | 📱 **Responsive Design** | Works beautifully on desktop and mobile |
 | 🌙 **Dark Theme** | Easy on the eyes with a modern dark UI |
 | ⚡ **Serverless** | Powered by Netlify Functions - fast and scalable |
+| 🤖 **n8n Automations** | Ready-to-use automation workflows you can download |
+
+---
+
+## 🤖 n8n Automations
+
+Browse the **n8n Automations** tab to find ready-to-use workflows you can import directly into your n8n instance.
+
+### Available Automations
+
+| Automation | Description | Required Services |
+|-----------|-------------|-------------------|
+| 🔍 **Job Search Ultimate** | Daily automated job search with AI scoring and cover letter generation | Google Gemini, Google Sheets, Gmail |
+
+### How to Use
+
+1. Log in to UploadGetLink with the public password
+2. Go to the **n8n Automations** tab
+3. Click on a workflow to see details and setup instructions
+4. Download or copy the workflow JSON
+5. Import into your n8n instance (Settings > Import from File)
+6. Configure your own API credentials
+7. Activate and enjoy!
+
+> **Note:** You bring your own API keys. These automations run on your infrastructure at zero cost.
 
 ---
 
@@ -70,12 +95,17 @@ UploadGetLink is a simple, fast, and secure file sharing service. Upload any fil
 ```
 uploadgetlink/
 ├── public/
+│   ├── automations/
+│   │   └── job-search-workflow.json  # n8n workflow JSON
 │   ├── index.html          # Main upload interface
-│   ├── styles.css          # Dark theme styling
+│   ├── styles.css          # Light theme styling
 │   └── app.js              # Frontend logic
 ├── netlify/
 │   └── functions/
 │       ├── auth.js         # Password authentication
+│       ├── get-ideas.js    # Fetch submitted ideas (admin)
+│       ├── submit-idea.js  # Idea submission handler
+│       ├── track-download.js  # Automation download analytics
 │       ├── upload.js       # File upload handler
 │       └── utils/
 │           └── azure-client.js  # Azure Blob client
