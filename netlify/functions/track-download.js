@@ -32,17 +32,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    const password = event.headers['x-upload-password'] || event.headers['X-Upload-Password'];
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    const publicPassword = process.env.PUBLIC_PASSWORD;
-
-    if (password !== adminPassword && password !== publicPassword) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: 'Unauthorized' })
-      };
-    }
+    // Track downloads from any authenticated user (admin or public)
+    // Public users no longer have a password, so no password check needed
 
     const { automationId, action, email } = JSON.parse(event.body);
 

@@ -28,13 +28,13 @@
       <p class="subtitle">Tell me your problem, I'll build the solution within a week!</p>
     </header>
 
-    <!-- Password Protection Screen -->
+    <!-- Login Screen -->
     <div id="auth-screen" class="screen">
       <div class="auth-box">
         <div class="auth-header">
-          <div class="auth-icon">🔐</div>
-          <h2>Welcome! Enter to Continue</h2>
-          <p class="auth-subtitle">Access the platform to submit ideas & upload files</p>
+          <div class="auth-icon">🚀</div>
+          <h2>Welcome! Enter Your Email</h2>
+          <p class="auth-subtitle">Access free automation workflows, upload files & submit ideas</p>
         </div>
 
         <form id="auth-form">
@@ -43,29 +43,20 @@
             <input
               type="email"
               id="email-input"
-              placeholder="your@email.com"
+              placeholder="your@gmail.com"
               autocomplete="email"
               required
             >
           </div>
 
-          <div class="form-group">
-            <label for="password-input">🔑 Password</label>
+          <div id="admin-password-group" class="form-group hidden">
+            <label for="password-input">🔑 Admin Password</label>
             <input
               type="password"
               id="password-input"
-              placeholder="Enter password"
+              placeholder="Admin password"
               autocomplete="current-password"
-              required
             >
-          </div>
-
-          <div class="password-hint">
-            <div class="hint-icon">💡</div>
-            <div class="hint-content">
-              <span class="hint-label">Public Password:</span>
-              <code class="hint-password">FreeIdeas!</code>
-            </div>
           </div>
 
           <button type="submit" class="btn btn-primary btn-large">

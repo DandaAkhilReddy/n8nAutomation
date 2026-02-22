@@ -121,22 +121,13 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Verify password from header and determine access level
+    // Determine access level from password header
     const password = event.headers['x-upload-password'] || event.headers['X-Upload-Password'];
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const publicPassword = process.env.PUBLIC_PASSWORD;
 
-    let accessLevel = null;
-    if (password === adminPassword) {
+    let accessLevel = 'public';
+    if (adminPassword && password === adminPassword) {
       accessLevel = 'admin';
-    } else if (password === publicPassword) {
-      accessLevel = 'public';
-    } else {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: 'Unauthorized' })
-      };
     }
 
     // Parse multipart form data

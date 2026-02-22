@@ -258,18 +258,29 @@ tabButtons.forEach(btn => {
 // ============================================
 // Authentication
 // ============================================
+const ADMIN_EMAIL = 'akhilreddydanda3@gmail.com';
+const adminPasswordGroup = document.getElementById('admin-password-group');
+
+// Show password field when admin email is typed
+if (emailInput) {
+  emailInput.addEventListener('input', () => {
+    const isAdmin = emailInput.value.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase();
+    if (isAdmin) {
+      showElement(adminPasswordGroup);
+    } else {
+      hideElement(adminPasswordGroup);
+      if (passwordInput) passwordInput.value = '';
+    }
+  });
+}
+
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
+  const password = passwordInput ? passwordInput.value.trim() : '';
 
   if (!email) {
     authError.textContent = 'Please enter your email';
-    return;
-  }
-
-  if (!password) {
-    authError.textContent = 'Please enter the password';
     return;
   }
 
@@ -313,9 +324,8 @@ authForm.addEventListener('submit', async (e) => {
       sessionStorage.setItem('uploadAuth', accessLevel);
       sessionStorage.setItem('uploadEmail', authEmail);
     } else {
-      authError.textContent = data.error || 'Invalid email or password';
-      passwordInput.value = '';
-      passwordInput.focus();
+      authError.textContent = data.error || 'Please enter a valid email address';
+      if (passwordInput) passwordInput.value = '';
     }
   } catch (error) {
     authError.textContent = 'Connection error. Please try again.';

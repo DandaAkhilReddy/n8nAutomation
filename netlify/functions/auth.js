@@ -23,18 +23,9 @@ exports.handler = async (event) => {
   try {
     const { email, password } = JSON.parse(event.body);
 
-    // Get credentials from environment
+    // Get admin credentials from environment
     const adminEmail = process.env.ADMIN_EMAIL || 'akhilreddydanda3@gmail.com';
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const publicPassword = process.env.PUBLIC_PASSWORD;
-
-    if (!adminPassword || !publicPassword) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'Server configuration error' })
-      };
-    }
 
     // Validate email is provided
     if (!email || !email.trim()) {
@@ -45,8 +36,18 @@ exports.handler = async (event) => {
       };
     }
 
+    // Basic email validation (must contain @ and a dot in domain)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Please enter a valid email address' })
+      };
+    }
+
     // Check admin - must match both email AND password
-    if (email.toLowerCase().trim() === adminEmail.toLowerCase() && password === adminPassword) {
+    if (adminPassword && email.toLowerCase().trim() === adminEmail.toLowerCase() && password === adminPassword) {
       return {
         statusCode: 200,
         headers,
@@ -59,27 +60,15 @@ exports.handler = async (event) => {
       };
     }
 
-    // Check public password - any email + correct public password
-    if (password === publicPassword) {
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          success: true,
-          accessLevel: 'public',
-          email: email.trim(),
-          message: 'Public access granted'
-        })
-      };
-    }
-
-    // Invalid credentials
+    // Public access - any valid email, no password required
     return {
-      statusCode: 401,
+      statusCode: 200,
       headers,
       body: JSON.stringify({
-        success: false,
-        error: 'Invalid email or password'
+        success: true,
+        accessLevel: 'public',
+        email: email.trim(),
+        message: 'Welcome! Access granted'
       })
     };
   } catch (error) {

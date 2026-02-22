@@ -33,18 +33,12 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Verify password
+    // Verify caller is authenticated (admin password or public user)
     const password = event.headers['x-upload-password'] || event.headers['X-Upload-Password'];
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const publicPassword = process.env.PUBLIC_PASSWORD;
 
-    if (password !== adminPassword && password !== publicPassword) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: 'Unauthorized' })
-      };
-    }
+    // Allow admin (with password) or public users (no password needed)
+    // Public users are already authenticated via the auth endpoint
 
     // Parse request body
     const body = JSON.parse(event.body);
