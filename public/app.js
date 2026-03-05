@@ -51,7 +51,7 @@ let accessLevel = null; // 'admin' or 'public'
 // ============================================
 const API_BASE = '/api';
 const IDEA_SUBMITTED_KEY = 'n8nautomations_idea_submitted';
-const GATED_TABS = ['automations'];
+const GATED_TABS = ['automations', 'claude-code'];
 
 // ============================================
 // Automations Configuration

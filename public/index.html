@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danda Akhil Reddy - N8n Automations</title>
+  <title>Danda Akhil Reddy Automations</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 </head>
@@ -13,7 +13,7 @@
     <header>
       <div class="header-content">
         <div class="logo-section">
-          <h1>🤖 Danda Akhil Reddy N8n Automations</h1>
+          <h1>🤖 Danda Akhil Reddy Automations</h1>
           <p class="tagline">I Build Your Automation Ideas <span class="free-badge">100% FREE</span></p>
         </div>
         <button id="logout-btn" class="btn btn-logout hidden">
@@ -80,6 +80,7 @@
       <nav class="tab-nav">
         <button class="tab-btn active" data-tab="ideas">💡 Submit Idea</button>
         <button class="tab-btn" data-tab="automations">🤖 n8n Automations</button>
+        <button class="tab-btn" data-tab="claude-code">🧠 Claude Code</button>
         <button class="tab-btn admin-only hidden" data-tab="dashboard">📊 Dashboard</button>
       </nav>
 
@@ -126,7 +127,7 @@
           <p>I'm helping my LinkedIn family every day with 1 new automation. Your idea helps the community!</p>
           <div class="bonus-alert">
             <span class="bonus-icon">🔓</span>
-            <span>n8n Automations are now <strong>unlocked</strong> — browse and download free workflows!</span>
+            <span>n8n Automations &amp; Claude Code tabs are now <strong>unlocked</strong>!</span>
           </div>
           <div class="success-actions">
             <button id="view-automations" class="btn btn-primary">🤖 Browse n8n Automations</button>
@@ -138,6 +139,64 @@
       <!-- Tab: n8n Automations -->
       <div id="tab-automations" class="tab-content hidden">
         <div id="automations-content"></div>
+      </div>
+
+      <!-- Tab: Claude Code -->
+      <div id="tab-claude-code" class="tab-content hidden">
+        <div class="claude-code-hero">
+          <div class="claude-code-icon">🧠</div>
+          <h2>Claude Code — Free for Open Source</h2>
+          <p>Anthropic just launched <strong>Claude for Open Source Program</strong> — giving open-source developers free access to Claude Code, their AI coding assistant.</p>
+        </div>
+
+        <div class="claude-post-card">
+          <div class="claude-post-header">
+            <div class="claude-post-header-left">
+              <span style="font-size:1.5rem;">💼</span>
+              <div>
+                <div style="font-weight:600; color:var(--text-primary);">Akhil Reddy on LinkedIn</div>
+                <div class="claude-post-author">Claude Code &amp; Open Source</div>
+              </div>
+            </div>
+          </div>
+          <div class="claude-post-body">
+Claude just mass-released Claude Code for Open Source Contributors — and it's completely FREE.
+
+Here's what you get:
+• $1,000/month in API credits
+• Full access to Claude Code (Anthropic's AI coding agent)
+• Works right in your terminal — no IDE needed
+• Understands entire codebases, writes tests, fixes bugs, handles git
+
+Who qualifies:
+• Maintainers of popular open-source projects
+• Active contributors to OSS repositories
+• Anyone building tools the community uses
+
+This is Anthropic betting that if developers try Claude Code, they'll never go back. And honestly? They might be right.
+
+I've been using Claude Code for weeks and it's changed how I ship code. It doesn't just autocomplete — it thinks, plans, and executes across files.
+
+If you contribute to open source, apply now. The $1,000/month credits won't last forever.
+          </div>
+        </div>
+
+        <div class="claude-apply-section">
+          <h3>How to Apply</h3>
+          <ol class="claude-steps">
+            <li><span>Go to the Claude for Open Source registration page</span></li>
+            <li><span>Sign in with your GitHub account</span></li>
+            <li><span>Select the open-source projects you maintain or contribute to</span></li>
+            <li><span>Submit your application — approvals are rolling</span></li>
+          </ol>
+        </div>
+
+        <div class="claude-cta">
+          <a href="https://claude.com/contact-sales/claude-for-oss" target="_blank" rel="noopener noreferrer" class="btn btn-claude btn-large">
+            🚀 Apply for Claude for Open Source Program
+          </a>
+          <p class="claude-cta-note">Free $1,000/month in API credits for qualifying open-source developers</p>
+        </div>
       </div>
 
       <!-- Tab: Admin Dashboard (Admin Only) -->
